@@ -8,7 +8,7 @@ typedef struct {
     float preco;
 } Livro;
 
-// variaveis do tipo livro
+// Lista original (desorganizada por padrão)
 Livro listaLivros[5] = { 
     {"Pai rico, filho probissimo", 39.90}, 
     {"Ricke and Mori", 29.90}, 
@@ -17,83 +17,115 @@ Livro listaLivros[5] = {
     {"Capitoes do IFBA", 34.90}
 };
 
-//função para comparar nomes transformando letra por letra em minusculas
+// Função para comparar nomes transformando letra por letra em minúsculas
 int compararNomes(char s1[], char s2[]) {
     int i = 0;
     while (s1[i] != '\0' && s2[i] != '\0') {
-        //criei essas temporarias para n mexer direto no titulo dos livros
         char c1 = s1[i];
         char c2 = s2[i];
 
-        if (c1 == '\n') //Transforma \n em \0
-        c1 = '\0';
-        if (c2 == '\n') 
-        c2 = '\0';
+        if (c1 == '\n') c1 = '\0';
+        if (c2 == '\n') c2 = '\0';
 
-        if (c1 == '\0' || c2 == '\0') 
-        break;
+        if (c1 == '\0' || c2 == '\0') break;
 
-        if (c1 >= 'A' && c1 <= 'Z') //Transforma maiusculas em minusculas
-        c1 += 32;
-        if (c2 >= 'A' && c2 <= 'Z') 
-        c2 += 32;
+        if (c1 >= 'A' && c1 <= 'Z') c1 += 32;
+        if (c2 >= 'A' && c2 <= 'Z') c2 += 32;
 
         if (c1 != c2) {
-            return c1 - c2;  //Se entrar nesse if já significa que uma palavra é alfabeticamente maior que a outra
+            return c1 - c2;  
         }
         i++;
     }
     return 0;
 }
 
-//tipo 1 Crescente 
-//tipo 0 Decrescente 
+// Exibe a lista original (desorganizada)
+void exibeOriginal(void) {
+    printf("\n=== LISTA ORIGINAL (DESORGANIZADA) ===\n");
+    for (int i = 0; i < 5; i++) {
+        printf("Titulo: %-30s | Preco: R$ %.2f\n", listaLivros[i].titulo, listaLivros[i].preco);
+    }
+}
+
+// tipoOrdenacao: 1 = Crescente (A-Z), 0 = Decrescente (Z-A)
 void ordenaTitulo(int tipoOrdenacao){
     Livro titulosOrdenados[5];
 
-    for(int i = 0; i<5;i++){
+    for(int i = 0; i < 5; i++){
         titulosOrdenados[i] = listaLivros[i];
     }
-    for(int i=0; i<5;i++){
-        for(int k=i+1; k<5; k++){
+    for(int i = 0; i < 5; i++){
+        for(int k = i + 1; k < 5; k++){
             int comp = compararNomes(titulosOrdenados[i].titulo, titulosOrdenados[k].titulo);
 
-    //Ordem CRESCENTE (A-Z)
-    if(tipoOrdenacao == 1) {
-        if (comp > 0) { // Se o primeiro for MAIOR alfabeticamente, troca
-        Livro temp = titulosOrdenados[i];
-        titulosOrdenados[i] = titulosOrdenados[k];
-        titulosOrdenados[k] = temp;
+            if(tipoOrdenacao == 1) {
+                if (comp > 0) { 
+                    Livro temp = titulosOrdenados[i];
+                    titulosOrdenados[i] = titulosOrdenados[k];
+                    titulosOrdenados[k] = temp;
+                }
+            }
+            if(tipoOrdenacao == 0) {
+                if (comp < 0) { 
+                    Livro temp = titulosOrdenados[i];
+                    titulosOrdenados[i] = titulosOrdenados[k];
+                    titulosOrdenados[k] = temp;
+                }
+            }
         }
     }
-
-    //Ordem DECRESCENTE (Z-A)
-    if (tipoOrdenacao == 0) {
-        if (comp < 0) { // Se o primeiro for MENOR alfabeticamente, troca
-        Livro temp = titulosOrdenados[i];
-        titulosOrdenados[i] = titulosOrdenados[k];
-        titulosOrdenados[k] = temp;
-        }
-    }
-    }
-}
-    printf("\n=== LIVROS ORDENADOS POR TITULO ===\n");
+    printf("\n=== LIVROS ORDENADOS POR TITULO (%s) ===\n", tipoOrdenacao == 1 ? "Crescente (A-Z)" : "Decrescente (Z-A)");
     for (int i = 0; i < 5; i++) {
         printf("Titulo: %-30s | Preco: R$ %.2f\n", titulosOrdenados[i].titulo, titulosOrdenados[i].preco);
     }
 }
 
-void ordenaPreco(void){
-    int k;
-    k = listaLivros[0].preco;
-    for(int i=0; i<100;i++){
-        if (listaLivros[i].preco < k){
-            k = listaLivros[i].preco;
+// tipoOrdenacao: 1 = Crescente (Menor para Maior), 0 = Decrescente (Maior para Menor)
+void ordenaPreco(int tipoOrdenacao){
+    Livro precosOrdenados[5];
+
+    for(int i = 0; i < 5; i++){
+        precosOrdenados[i] = listaLivros[i];
+    }
+    for(int i = 0; i < 5; i++){
+        for(int k = i + 1; k < 5; k++){
+            if(tipoOrdenacao == 1) {
+                if (precosOrdenados[i].preco > precosOrdenados[k].preco) {
+                    Livro temp = precosOrdenados[i];
+                    precosOrdenados[i] = precosOrdenados[k];
+                    precosOrdenados[k] = temp;
+                }
+            } else {
+                if (precosOrdenados[i].preco < precosOrdenados[k].preco) {
+                    Livro temp = precosOrdenados[i];
+                    precosOrdenados[i] = precosOrdenados[k];
+                    precosOrdenados[k] = temp;
+                }
+            }
         }
+    }
+    printf("\n=== LIVROS ORDENADOS POR PRECO (%s) ===\n", tipoOrdenacao == 1 ? "Crescente (Menor > Maior)" : "Decrescente (Maior > Menor)");
+    for (int i = 0; i < 5; i++) {
+        printf("Titulo: %-30s | Preco: R$ %.2f\n", precosOrdenados[i].titulo, precosOrdenados[i].preco);
     }
 }
 
-int main(void){
-    ordenaTitulo(1);
+// Recebe os argumentos enviados pela interface Python
+int main(int argc, char *argv[]){
+    if (argc >= 3) {
+        char *criterio = argv[1];
+        int tipo = atoi(argv[2]);
+
+        if (strcmp(criterio, "titulo") == 0) {
+            ordenaTitulo(tipo);
+        } else if (strcmp(criterio, "preco") == 0) {
+            ordenaPreco(tipo);
+        } else {
+            exibeOriginal();
+        }
+    } else {
+        exibeOriginal(); 
+    }
     return 0;
 }
